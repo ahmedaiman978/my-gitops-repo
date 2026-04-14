@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: my-project
+  namespace: argocd
+spec:
+  description: My Demo Project
+  sourceRepos:
+    - https://github.com/ahmedaiman978/my-gitops-repo.git
+  destinations:
+    - namespace: dev
+      server: https://kubernetes.default.svc
+    - namespace: prod
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: ''
+      kind: Namespace
+  namespaceResourceWhitelist:
+    - group: 'apps'
+      kind: Deployment
+    - group: ''
+      kind: Service
+    - group: ''
+      kind: ConfigMap
+  roles:
+    - name: developer
+      description: Developer role
+      policies:
+        - p, proj:my-project:developer, applications, get, my-project/*, allow
+        - p, proj:my-project:developer, applications, sync, my-project/*, allow
+      groups:
+        - my-org:developers
